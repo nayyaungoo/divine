@@ -39,11 +39,11 @@ class Realm(Layout):
 
 
     def border(self, enable=True):
-        
+
         if enable and not self.has_border:
             self.realm.border()
             self.has_border = True
-        
+
         elif not enable and self.has_border:
             self.realm.border(' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',)
             self.has_border = False
@@ -115,3 +115,10 @@ class Realm(Layout):
 
 
         return (y, x, text)
+
+def wrapper(screen):
+
+    def _(scr):
+        screen()
+
+    curses.wrapper(_)
