@@ -22,6 +22,10 @@ class Cursor(object):
     def y(self, value):
         self._y = value
 
+    @x.setter
+    def x(self, value):
+        self._x = value
+
 
 class Realm(Layout):
 
@@ -44,21 +48,26 @@ class Realm(Layout):
             self.has_border = False
 
 
-    def write(self, *args):
+    def write(self, *args, pully=True, pullx=False):
 
-        y, x, text = self.__validate_args(args)
+        y, x, text = self.__validate_args(args, pully, pullx)
         self.realm.addstr(y, x, text)
 
 
-    def ask(self):
+    def ask(self, *args, pully=True, pullx=False):
+        if len(args) != 0:
+            y, x, text = self.__validate_args(args, pully, pullx)
+            self.write(text, y, x, pully=pully, pullx=pullx)
         self.realm.getch()
 
 
-    def __validate_args(self, args):
+    def __validate_args(self, args, pully, pullx):
 
         if len(args) == 0:
             raise ValueError(f"Require at least: 1 argument, Receieved: {len(args)}")
 
+
+        # Tracked Writing
         elif len(args) == 1:
 
             text = str(args[0])
@@ -71,13 +80,36 @@ class Realm(Layout):
                 y = 1 + self.cursor.y
                 x = 1 + self.cursor.x
 
-            self.cursor.y += 1
+            if not pullx:
+                self.cursor.x = 0
 
+            # Even pully is False, it shouldn't affect on a 'Tracked Writing'
+            pully = True
+
+
+        # Scripted Writing
         elif len(args) == 3:
 
             text = str(args[0])
 
             y = int(args[1])
             x = int(args[2])
+
+
+        # Flags
+
+        if pully:
+            self.cursor.y += 1
+
+        if pullx:
+
+            if not self.has_border:
+                self.cursor.x = x + len(text)
+                self.cursor.y = y
+
+            elif self.has_border:
+                self.cursor.x = x + len(text) - 1
+                self.cursor.y = y - 1
+
 
         return (y, x, text)
