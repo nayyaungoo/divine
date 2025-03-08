@@ -11,4 +11,9 @@ class Paradise(Realm):
 
 
     def summon(self):
-        self.realm = self.parent.realm.subpad(self.maxy, self.maxx, self.begy, self.begx)
+        self.realm = self.parent.realm.subpad(
+            self.maxy, 
+            self.maxx, 
+            self.begy + self.parent.begy, 
+            self.begx + self.parent.begx,
+        )
