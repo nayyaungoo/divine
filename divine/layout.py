@@ -15,7 +15,10 @@ class Empty(object):
 
 
 class Value(int):
-    ...
+
+    @property
+    def half(self):
+        return self // 2
 
 
 class Layout(object):
