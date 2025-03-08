@@ -35,6 +35,7 @@ class Realm(Layout):
         self.has_border = False
         self.realm: curses.window
         self.cursor = Cursor()
+        curses.echo(True)
 
 
     def border(self, enable=True):
@@ -58,7 +59,8 @@ class Realm(Layout):
         if len(args) != 0:
             y, x, text = self.__validate_args(args, pully, pullx)
             self.write(text, y, x, pully=pully, pullx=pullx)
-        self.realm.getch()
+
+        return self.realm.getstr()
 
 
     def __validate_args(self, args, pully, pullx):
