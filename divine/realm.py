@@ -55,12 +55,14 @@ class Realm(Layout):
         self.realm.addstr(y, x, text)
 
 
-    def ask(self, *args, pully=True, pullx=False):
+    def ask(self, *args, pully=True, pullx=False, request='str'):
         if len(args) != 0:
             y, x, text = self.__validate_args(args, pully, pullx)
             self.write(text, y, x, pully=pully, pullx=pullx)
 
-        return self.realm.getstr()
+        match request:
+            case 'str': return self.realm.getstr()
+            case 'ch': return self.realm.getkey()
 
 
     def __validate_args(self, args, pully, pullx):
