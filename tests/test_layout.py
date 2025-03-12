@@ -18,3 +18,10 @@ print("----------------------------")
 
 value = Empty() + 2
 print(f"(new) value: {value.half}")
+
+print("----------------------------")
+
+layout = Layout()
+layout.maxy = None
+layout.maxx = layout.maxy + 20
+print(f"layout.maxx: {layout.maxx}")
