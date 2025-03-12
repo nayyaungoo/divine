@@ -1,7 +1,7 @@
 from curses import wrapper, initscr, endwin
 from src.divine import *
 
-input("Method 1 - Procedure")
+# input("Method 1 - Procedure")
 # -----------------
 
 def procedural():
@@ -13,13 +13,18 @@ def procedural():
     menu.begx = 0
     initscr()
     menu.summon()
-    menu.border()
+    menu.border(False)
+    menu.write("Helo", 5, 2, pullyx=True)
+    menu.write("Helo", 9, 5)
+    menu.write("X", pullx=True)
+    menu.write("Helo", 1, 1, pullx=True, pully=True)
+    menu.write("Helo")
     menu.ask()
     endwin()
 
 procedural()
 
-input("Method 2 - OOP")
+# input("Method 2 - OOP")
 # -----------------
 
 def oop(scr):
@@ -41,5 +46,4 @@ def oop(scr):
 
     Menu()
 
-wrapper(oop)
-            
+# wrapper(oop)
