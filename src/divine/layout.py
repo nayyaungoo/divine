@@ -58,6 +58,19 @@ class Layout(object):
         self.__begx = self.validate(value)
 
 
+    @property
+    def has_maxyx(self):
+        return Empty not in (type(self.maxy), type(self.maxx))
+
+    @property
+    def has_begyx(self):
+        return Empty not in (type(self.begy), type(self.begx))
+
+    @property
+    def has_allyx(self):
+        return self.has_maxyx and self.has_begyx
+
+
     @staticmethod
     def validate(value: int | Value | None | Empty):
         """

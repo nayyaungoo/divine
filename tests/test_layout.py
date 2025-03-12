@@ -25,3 +25,11 @@ layout = Layout()
 layout.maxy = None
 layout.maxx = layout.maxy + 20
 print(f"layout.maxx: {layout.maxx}")
+
+print("----------------------------")
+
+layout.begy = 20
+layout.begx = 20
+print(layout.has_begyx)
+print(layout.has_maxyx)
+print(layout.has_allyx)
