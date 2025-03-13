@@ -38,17 +38,16 @@ class Realm(Layout):
             self.realm.border(' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ')
             self.has_border = False
 
-    def ask(self, question='', *coordinates, type=str, pully=True, pullx=True, pullyx=False, leading=0, returnable=False):
+    def ask(self, question='', *coordinates, type='str', pully=True, pullx=True, pullyx=False, leading=0, returnable=False):
         self.__validate_status()
 
         y, x = self.__extract_coordinates(coordinates)
         self.write(question, y, x, pully=pully, pullx=pullx, pullyx=pullyx, leading=leading)
 
-        answer = self.realm.getstr().decode('utf-8')
-        
-        if type == int:
-            try: answer = int(answer)
-            except ValueError: pass
+        match type:
+            case 'str': answer = self.__ask_str()
+            case 'int': answer = self.__ask_int()
+            case 'key': answer = self.__ask_key()
 
         return answer if not returnable else (answer, question, y, x, returnable)
 
@@ -105,3 +104,14 @@ class Realm(Layout):
 
     def __leading(self, leading):
         self.cursor.y += leading
+
+    def __ask_str(self):
+        return self.realm.getstr().decode('utf-8')
+
+    def __ask_int(self):
+        try: return int(self.__ask_str())
+        except ValueError: pass
+
+    def __ask_key(self):
+        self.realm.keypad(True)
+        return self.realm.getch()

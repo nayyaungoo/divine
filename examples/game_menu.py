@@ -14,12 +14,12 @@ def main(scr):
 
             self.summon()
             menu = {
-                1 : "Start Game",
-                2 : "Save Game",
-                3 : "Load Game",
-                0 : "Exit Game",
+                0 : "Start Game",
+                1 : "Save Game",
+                2 : "Load Game",
+                3 : "Exit Game",
             }
-            selected = None
+            selected = 0
 
             while True:
                 self.clear()
@@ -30,16 +30,19 @@ def main(scr):
 
                 for option, menu_item in menu.items():
                     if selected == option:
-                        self.write(f"{option}.{menu_item} [Selected]")
+                        self.write(f"{menu_item} [Selected]")
                     elif option == 0:
-                        self.write(f"{option}.{menu_item}", leading=1)
+                        self.write(f"{menu_item}")
                     else:
-                        self.write(f"{option}.{menu_item}")
+                        self.write(f"{menu_item}")
 
-                selected = self.ask("Enter an option: ", type=int)
+                self.write('')
+                option = self.ask("Arrow UP/DOWN to select", type='key')
 
-                if selected == 0:
-                    break
+                if option == 259 and selected > 0:
+                    selected -= 1
+                elif option == 258 and selected < 3:
+                    selected += 1
 
     MainMenu()
 
