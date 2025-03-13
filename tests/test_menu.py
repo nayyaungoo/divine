@@ -21,13 +21,13 @@ def main(scr):
 
                 self.write(f"Selected: {option}", 0, 2)
 
-                self.write("Mini Game", 2, 5, pullx=True, pully=True)
-                self.write("=========", pullx=True, leading=1)
+                self.write("Mini Game", 2, 5)
+                self.write("=========", leading=1)
 
-                self.write("1.Start Game", pully=True, pullx=True)
-                self.write("2.Save Game", pullx=True)
-                self.write("3.Load Game", pullx=True)
-                self.write("0.Quit Game", pullx=True, leading=1)
+                self.write("1.Start Game")
+                self.write("2.Save Game")
+                self.write("3.Load Game")
+                self.write("0.Quit Game", leading=1)
 
                 # Using pullx instead of adding y and x are better
                 # than adding everything because when it is time 

@@ -38,7 +38,7 @@ class Realm(Layout):
             self.realm.border(' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ')
             self.has_border = False
 
-    def ask(self, question='', *coordinates, pully=False, pullx=False, pullyx=False, leading=0, returnable=False):
+    def ask(self, question='', *coordinates, pully=True, pullx=True, pullyx=False, leading=0, returnable=False):
         self.__validate_status()
 
         y, x = self.__extract_coordinates(coordinates)
@@ -48,7 +48,7 @@ class Realm(Layout):
         
         return answer if not returnable else (answer, question, y, x, returnable)
 
-    def write(self, text, *coordinates, pully=False, pullx=False, pullyx=False, leading=0, returnable=False):
+    def write(self, text, *coordinates, pully=True, pullx=True, pullyx=False, leading=0, returnable=False):
         self.__validate_status()
         y, x = self.__extract_coordinates(coordinates)
 
