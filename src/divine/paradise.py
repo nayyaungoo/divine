@@ -18,12 +18,3 @@ class Paradise(Realm):
 
         elif self.has_allyx:
             self.realm = self.parent.realm.subpad(self.maxy, self.maxx, self.begy, self.begx)
-
-class Inside(Paradise):
-
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.maxy = parent.maxy - (1 + self.parent.has_border)
-        self.maxx = parent.maxx - (1 + self.parent.has_border)
-        self.begy = 0 + self.parent.has_border
-        self.begx = 0 + self.parent.has_border
