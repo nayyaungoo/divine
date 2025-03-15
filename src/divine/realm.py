@@ -3,6 +3,13 @@ from .layout import Layout
 from .cursor import Cursor
 
 
+class InsufficientLayout(Exception):
+    """ Raised when the realm is being summoned are being called under suffocating """
+
+class RealmNotFound(Exception):
+    """ Raised when realm methods are being called without summoning first """
+
+
 class Realm(Layout):
 
     def __init__(self):
@@ -12,25 +19,41 @@ class Realm(Layout):
         self.cursor = Cursor()
         curses.echo()
 
+
+    # I'm sorry
+    def RealmMethod(func):
+        def wrapper(self, *args, **kwargs):
+            if not self.status:
+                raise RealmNotFound(f"Realm methods are usable only after  summoning. Use summon() to summon one. self.status: {self.status}") 
+
+            return func(self, *args, **kwargs)
+
+        return wrapper
+
+
     @property
-    def status(self):
+    def status(self) -> bool:
+        """ Returns True if realm has been summoned, otherwise False """
+
         return hasattr(self, 'realm')
 
-    def border(self, activate=True):
-        """
-        Parameters
-        ----------
-        activate: bool, optional
-            True: Realm will draw a border around the Heaven
-            False: Realm will replace the existed border with ' '
 
-        Raises
-        ------
-        TypeError
-            If Realm have not been summoned
-        """
+    @RealmMethod
+    def border(self, activate=True) -> None:
+        """ Draw a border at the edges of the self.realm
 
-        self.__validate_status()
+        Parameters:
+            activate: bool, optional
+                True: Realm will draw a border around the Heaven
+                False: Realm will replace the existed border with spaces (' ')
+
+        Raises:
+            RealmNotFound
+                If Realm have not been summoned
+
+        """
+        # TODO: Add more parameters for more flexibility and customizability
+
         if activate:
             self.realm.border()
             self.has_border = True
@@ -38,8 +61,50 @@ class Realm(Layout):
             self.realm.border(' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ')
             self.has_border = False
 
+
+    @RealmMethod
     def ask(self, question='', *coordinates, type='str', pully=True, pullx=True, pullyx=False, leading=0, returnable=False):
-        self.__validate_status()
+        """ Ask user for an input and return it
+
+        Parameters:
+            question: str, optional(default: '')
+                Received string will be passed to write() and displayed on determined or specified coordinates
+
+            *coordinates: int, int, optional
+                Received coordinates will be passed to write() and coordinate the question
+
+                default:
+                    y: int = 0 + self.has_border + self.cursor.y
+                    x: int = 0 + self.has_border + self.cursor.x
+
+            type: str, optional(default: 'str')
+                Determine the return type. Returns 'None' if the type of answer doesn't match 
+                the speficifed type, otherwise returns the answer as requested type
+
+            pully: bool, optional(default: True)
+                True: The y coordinate of next write() or ask() will follow the current y of ask()
+                False: The y coordinate of next write() or ask() will follow the current y of cursor
+
+            pullx: bool, optional(default: True)
+                True: The x coordinate of next write() or ask() will follow the current x of ask()
+                False: The x coordinate of next write() or ask() will follow the current x of cursor
+
+            pullyx: bool, optional(default: False)
+                True: The next write() or ask() will be displayed right after the end of the question
+                False: The next write() or ask() will be displayed on determined or specified coordinates
+
+            leading: int, optional(default: 0)
+                The y gap between current ask() and next ask() or write()
+
+            returable: bool, optional(default: False)
+                True: Returns (answer, question, y, x, returnable)
+                False: Returns answer
+
+        Raises:
+            RealmNotFound
+                If Realm have not been summoned
+
+        """
 
         y, x = self.__extract_coordinates(coordinates)
         self.write(question, y, x, pully=pully, pullx=pullx, pullyx=pullyx, leading=leading)
@@ -49,10 +114,49 @@ class Realm(Layout):
             case 'int': answer = self.__ask_int()
             case 'key': answer = self.__ask_key()
 
-        return answer if not returnable else (answer, question, y, x, returnable)
+        return answer if not returnable else (answer, question, y, x)
 
-    def write(self, text, *coordinates, pully=True, pullx=True, pullyx=False, leading=0, returnable=False):
-        self.__validate_status()
+
+    @RealmMethod
+    def write(self, text='', *coordinates, pully=True, pullx=True, pullyx=False, leading=0, returnable=False):
+        """ Display a string
+
+        Parameters:
+            text: str, optional(default: '')
+                Received string will be displayed on determined or specified coordinates
+
+            *coordinates: int, int, optional
+                Received coordinates will coordinate the text
+
+                default:
+                    y: int = 0 + self.has_border + self.cursor.y
+                    x: int = 0 + self.has_border + self.cursor.x
+
+            pully: bool, optional(default: True)
+                True: The y coordinate of next write() or ask() will follow the current y of ask()
+                False: The y coordinate of next write() or ask() will follow the current y of cursor
+
+            pullx: bool, optional(default: True)
+                True: The x coordinate of next write() or ask() will follow the current x of ask()
+                False: The x coordinate of next write() or ask() will follow the current x of cursor
+
+            pullyx: bool, optional(default: False)
+                True: The next write() or ask() will be displayed right after the end of the question
+                False: The next write() or ask() will be displayed on determined or specified coordinates
+
+            leading: int, optional(default: 0)
+                The y gap between current ask() and next ask() or write()
+
+            returable: bool, optional(default: False)
+                True: Returns (text, y, x, returnable)
+                False: Returns 'None'
+
+        Raises:
+            RealmNotFound
+                If Realm have not been summoned
+
+        """
+
         y, x = self.__extract_coordinates(coordinates)
 
         # All these pulls should only affect the next write()
@@ -65,15 +169,16 @@ class Realm(Layout):
         self.realm.addstr(y, x, str(text))
         if returnable: return (text, y, x)
 
+
     def refresh(self):
+        # TODO: Make it more useful and add documentation
         self.realm.refresh()
 
+
     def clear(self):
+        # TODO: Make it more useful and add documentation
         self.realm.clear()
 
-    def __validate_status(self):
-        if not self.status:
-            raise TypeError(f"Realm methods are usable only after summoning. Use summon() to summon one. self.status: {self.status}")
 
     def __extract_coordinates(self, coordinates):
         if len(coordinates) not in (0, 2):

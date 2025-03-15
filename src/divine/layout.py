@@ -73,16 +73,17 @@ class Layout(object):
 
     @staticmethod
     def validate(value: int | Value | None | Empty):
-        """
-        Parameters
-        ----------
-        value: int, Value, None, Empty
-            The value you want to validate
 
-        Raises
-        ------
-        TypeError
-            If received value is neither int, Value, None, Empty
+        """ Validate the type of received value
+    
+        Parameters:
+            value: int, Value, None, Empty
+                The value you want to validate
+
+        Raises:
+            TypeError
+                If received value is neither int, Value, None, Empty
+
         """
 
         if type(value) not in (int, Value, type(None), Empty):

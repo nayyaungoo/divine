@@ -1,4 +1,4 @@
-from .realm import Realm
+from .realm import Realm, InsufficientLayout
 from .heaven import Heaven
 
 
@@ -9,9 +9,16 @@ class Paradise(Realm):
         self.parent = parent
 
     def summon(self):
+        """ Create a smaller outputable section on terminal
+
+        Raises:
+            InsufficientLayout
+                If Heaven have neither maxy nor maxx layout
+
+        """
 
         if not self.has_begyx:
-            raise TypeError(f"Need layout values begy and begx to summon a Paradise. self.has_begyx: {self.has_begyx}")
+            raise InsufficientLayout(f"Need layout values begy and begx to summon a Paradise. self.has_begyx: {self.has_begyx}")
 
         elif not self.has_allyx:
             self.realm = self.parent.realm.subpad(self.begy, self.begx)
