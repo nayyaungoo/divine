@@ -24,5 +24,3 @@ class Heaven(metaclass=Realm):
                 self.received.append(paradises[index](self))
         if returnable:
             return self.received
-
-ThePlaceIDoNotBelong = Heaven()
