@@ -2,6 +2,7 @@
 __all__ = ['paradise', 'Heaven']
 
 def paradise(func):
+    print(Heaven.__subclasses__.__dir__()[-1])
     Heaven.paradises.append(func)
     return func
 
@@ -12,6 +13,8 @@ class Heaven(object):
     def run(self, *args, returnable=False):
         # the list 'received' is always parallel to the list 'paradises'
         self.received = []
+
+        self.paradises = [_ for _ in self.paradises if str(_).startswith(f"<function {self.__class__.__name__}")]
 
         if len(args) == 0:
             for paradise in self.paradises:
