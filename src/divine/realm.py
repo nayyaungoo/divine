@@ -1,26 +1,28 @@
 
-class Realm(type):
+__all__ = ['paradise', 'Heaven']
 
-    # TODO: Idk why did I even created this :<
-    def __new__(cls, clsname, bases, attrs):
-        return super().__new__(cls, clsname, bases, attrs)
-
-
-paradises = []
 def paradise(func):
-    paradises.append(func)
+    Heaven.paradises.append(func)
     return func
 
-class Heaven(metaclass=Realm):
+
+class Heaven(object):
+    paradises = []
 
     def run(self, *args, returnable=False):
+        # the list 'received' is always parallel to the list 'paradises'
         self.received = []
+
         if len(args) == 0:
-            for _ in paradises:
-                self.received.append(_(self))
+            for paradise in self.paradises:
+                # Run the all the paradise and store the return value in 'received'
+                self.received.append(paradise(self))
 
         else:
             for index in args:
-                self.received.append(paradises[index](self))
+                # Run the specified Paradises and store the return value in 'received'
+                self.received.append(self.paradises[index](self))
+
+        # Strongly recommend to directly use from the list 'received' than returning
         if returnable:
             return self.received

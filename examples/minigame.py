@@ -31,19 +31,16 @@ class MainMenu(Heaven):
     def Exit(self):
         print("--------- ------ ------ Bye!")
 
+row_A = MainMenu()
+index = 0
+
 while True:
-    received = MainMenu().run(0, returnable=True)
+    row_A.run(index)
 
-    if received[0] == '1':
-        index = 1
+    match row_A.received[0]:
 
-    elif received[0] == '2':
-        index = 2
-
-    elif received[0] == '3':
-        index = 3
-
-    elif received[0] == '0':
-        break
-
-    MainMenu().run(index)
+        case '1': index = 1
+        case '2': index = 2
+        case '3': index = 3
+        case '0': break
+        case _  : index = 0
