@@ -13,6 +13,8 @@ class Heaven(object):
         # the list 'received' is always parallel to the list 'paradises'
         self.received = []
 
+        self.paradises = [_ for _ in self.paradises if str(_).startswith(f"<function {self.__class__.__name__}")]
+
         if len(args) == 0:
             for paradise in self.paradises:
                 # Run the all the paradise and store the return value in 'received'
