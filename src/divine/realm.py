@@ -2,7 +2,6 @@
 __all__ = ['paradise', 'Heaven']
 
 def paradise(func):
-    print(Heaven.__subclasses__.__dir__()[-1])
     Heaven.paradises.append(func)
     return func
 
