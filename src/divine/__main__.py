@@ -2,19 +2,21 @@
 
 # NOTE -- works
 def main_1():
-    from . import domains
+    from . import core
 
-    domains.init()
-    print(domains.STDSCR.coordinates)
-    print(domains.STDSCR.dimensions)
+    core.init()
+    print(core.STDSCR.coordinates)
+    print(core.STDSCR.dimensions)
+    core.deinit()
 
-# NOTE -- dosen't works - WHYY
+# NOTE -- still dosen't works - BUT WHYY
 def main_2():
-    from .domains import init, STDSCR
+    from .core import init, STDSCR, deinit
 
     init()
     print(STDSCR.coordinates)
     print(STDSCR.dimensions)
+    deinit()
 
 
 if __name__ == '__main__':
