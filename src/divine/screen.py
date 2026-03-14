@@ -1,15 +1,8 @@
-# boilerplates. boilerplates everywhere
-
-from typing import Optional
+from typing import Optional, Any
 from curses import window, initscr, endwin
 
-class classproperty:
-    def __init__(self, func):
-        self.fget = func
-    def __get__(self, instance, owner):
-        return self.fget(owner)
-
-class STDSCR:
+# might be renamed later
+class StandardScreen(type):
     __realm: Optional[window] = None
 
     @classmethod
@@ -21,39 +14,38 @@ class STDSCR:
         endwin()
         cls.__realm = None
 
-    @classproperty
-    def y(cls) -> int:
-        if cls.__realm is None:
-            raise TypeError("The standard screen hasn't been initialized.")
-        return 0
+    def __getattribute__(self, name) -> int | Any:
 
-    @classproperty
-    def x(cls) -> int:
-        if cls.__realm is None:
-            raise TypeError("The standard screen hasn't been initialized.")
-        return 0
+        if name in ('y', 'x', 'height', 'width'):
+            if self.__realm is None:
+                raise TypeError("The library hasn't been initialized. Try calling `STDSCR.init()`.")
 
-    @classproperty
-    def height(cls) -> int:
-        if cls.__realm is None:
-            raise TypeError("The standard screen hasn't been initialized.")
-        return cls.__realm.getmaxyx()[0]
+            elif name in ('y', 'x'):
+                return 0
 
-    @classproperty
-    def width(cls) -> int:
-        if cls.__realm is None:
-            raise TypeError("The standard screen hasn't been initialized.")
-        return cls.__realm.getmaxyx()[1]
+            elif name == 'height':
+                return self.__realm.getmaxyx()[0]
+
+            elif name == 'width':
+                return self.__realm.getmaxyx()[1]
+
+        return super().__getattribute__(name)
+
+class STDSCR(metaclass=StandardScreen):
+    y: int
+    x: int
+    height: int
+    width: int
 
 def main():
     STDSCR.init()
 
     try:
         while True:
-            STDSCR._STDSCR__realm.addstr(f'{STDSCR.y, STDSCR.x}')
-            STDSCR._STDSCR__realm.addstr(f'{STDSCR.height, STDSCR.width}')
-            STDSCR._STDSCR__realm.getch()
-            STDSCR._STDSCR__realm.clear()
+            STDSCR._StandardScreen__realm.addstr(f'{STDSCR.y, STDSCR.x}')
+            STDSCR._StandardScreen__realm.addstr(f'{STDSCR.height, STDSCR.width}')
+            STDSCR._StandardScreen__realm.getch()
+            STDSCR._StandardScreen__realm.clear()
 
     finally:
         STDSCR.deinit()
