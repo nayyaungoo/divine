@@ -14,11 +14,14 @@ class StandardScreen(type):
         endwin()
         cls.__realm = None
 
-    def __getattribute__(self, name) -> int | Any:
+    def __getattribute__(self, name) -> Any:
 
-        if name in ('y', 'x', 'height', 'width'):
+        if name in ('realm', 'y', 'x', 'height', 'width'):
             if self.__realm is None:
                 raise TypeError("The library hasn't been initialized. Try calling `STDSCR.init()`.")
+
+            elif name == 'realm':
+                return self.__realm
 
             elif name in ('y', 'x'):
                 return 0
@@ -36,16 +39,17 @@ class STDSCR(metaclass=StandardScreen):
     x: int
     height: int
     width: int
+    realm: window
 
 def main():
     STDSCR.init()
 
     try:
         while True:
-            STDSCR._StandardScreen__realm.addstr(f'{STDSCR.y, STDSCR.x}')
-            STDSCR._StandardScreen__realm.addstr(f'{STDSCR.height, STDSCR.width}')
-            STDSCR._StandardScreen__realm.getch()
-            STDSCR._StandardScreen__realm.clear()
+            STDSCR.realm.addstr(f'{STDSCR.y, STDSCR.x}')
+            STDSCR.realm.addstr(f'{STDSCR.height, STDSCR.width}')
+            STDSCR.realm.getch()
+            STDSCR.realm.clear()
 
     finally:
         STDSCR.deinit()
