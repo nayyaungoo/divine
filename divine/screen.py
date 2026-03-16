@@ -1,11 +1,8 @@
 from curses import window, initscr, endwin
-from typing import Optional, Literal
-from .utilities import classproperty
+from typing import Optional, Any
 
-class StandardScreen:
+class StandardScreen(type):
     __realm: Optional[window] = None
-    y: Literal[0] = 0
-    x: Literal[0] = 0
 
     @classmethod
     def init(cls) -> None:
@@ -20,37 +17,52 @@ class StandardScreen:
         endwin()
         cls.__realm = None
 
-    @classproperty
-    def realm(cls) -> window:
-        if cls.__realm is None:
-            raise RuntimeError("The library is not initialized. Try calling STDSCR.init() first.")
-        return cls.__realm
+    def __getattribute__(self, name: str) -> Any:
+        if name in ('realm',
+                    'y', 'x',
+                    'height','width'):
 
-    @classproperty
-    def height(cls) -> int:
-        return cls.realm.getmaxyx()[0]
+            if StandardScreen.__realm is None:
+                raise RuntimeError("The library is not initialized. Try calling STDSCR.init() first.")
 
-    @classproperty
-    def width(cls) -> int:
-        return cls.realm.getmaxyx()[1]
+            elif name == 'realm':
+                return StandardScreen.__realm
+
+            elif name in ('y', 'x'):
+                return 0
+
+            elif name == 'height':
+                return StandardScreen.__realm.getmaxyx()[0]
+
+            elif name == 'width':
+                return StandardScreen.__realm.getmaxyx()[1]
+
+        return super().__getattribute__(name)
+
+class STDSCR(metaclass=StandardScreen):
+    y: int
+    x: int
+    height: int
+    width: int
+    realm: window
 
 def main():
     try:
         from curses import KEY_RESIZE
 
-        StandardScreen.init()
+        STDSCR.init()
         while True:
-            StandardScreen.realm.addstr(f"{StandardScreen.y, StandardScreen.x}")
-            StandardScreen.realm.addstr(f"{StandardScreen.height, StandardScreen.width}")
+            STDSCR.realm.addstr(f"{STDSCR.y, STDSCR.x}")
+            STDSCR.realm.addstr(f"{STDSCR.height, STDSCR.width}")
 
-            key = StandardScreen.realm.getch()
+            key = STDSCR.realm.getch()
             if key != KEY_RESIZE:
                 break
 
-            StandardScreen.realm.clear()
+            STDSCR.realm.clear()
 
     finally:
-        StandardScreen.deinit()
+        STDSCR.deinit()
 
 if __name__ == '__main__':
     main()
