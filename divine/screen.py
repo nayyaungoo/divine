@@ -1,10 +1,11 @@
 from curses import window, initscr, endwin
-from typing import Optional
+from typing import Optional, Literal
 from .utilities import classproperty
 
 class StandardScreen:
     __realm: Optional[window] = None
-    coordinates: tuple[int, int] = (0, 0)
+    y: Literal[0] = 0
+    x: Literal[0] = 0
 
     @classmethod
     def init(cls) -> None:
@@ -26,8 +27,12 @@ class StandardScreen:
         return cls.__realm
 
     @classproperty
-    def dimensions(cls) -> tuple[int, int]:
-        return cls.realm.getmaxyx()
+    def height(cls) -> int:
+        return cls.realm.getmaxyx()[0]
+
+    @classproperty
+    def width(cls) -> int:
+        return cls.realm.getmaxyx()[1]
 
 def main():
     try:
@@ -35,8 +40,8 @@ def main():
 
         StandardScreen.init()
         while True:
-            StandardScreen.realm.addstr(f"{StandardScreen.coordinates}")
-            StandardScreen.realm.addstr(f"{StandardScreen.dimensions}")
+            StandardScreen.realm.addstr(f"{StandardScreen.y, StandardScreen.x}")
+            StandardScreen.realm.addstr(f"{StandardScreen.height, StandardScreen.width}")
 
             key = StandardScreen.realm.getch()
             if key != KEY_RESIZE:
